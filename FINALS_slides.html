@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team AI Cost Radar — Finals Slides</title>
+<meta name="description" content="Upstage hackathon finals pitch deck — Team AI Cost Radar. EN/KO, arrow-key navigation.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%A1%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#0F141B;--surface:#161C25;--surface-2:#1D2530;--ink:#ECF1F7;--text:#C0C9D5;--muted:#8892A1;
+    --line:#29323E;--accent:#5AAAC5;--accent-strong:#8AC7DA;--good:#6FBF93;--warn:#D6A75E;--crit:#E0736A;
+    --fh:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --fm:"SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    --fk:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",var(--fh);
+  }
+  :root[data-theme="light"]{--bg:#F4F6F8;--surface:#FFFFFF;--surface-2:#EDEFF3;--ink:#161D28;--text:#3A4453;--muted:#6B7482;--line:#DBE0E7;--accent:#22687F;--accent-strong:#184F62;--good:#2C7A5B;--warn:#9A6A16;--crit:#A8443C;}
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--fh);-webkit-font-smoothing:antialiased;overflow:hidden;}
+  :root[data-lang="ko"] body{font-family:var(--fk);}
+  :root[data-lang="en"] .ko{display:none;} :root[data-lang="ko"] .en{display:none;}
+
+  .deck{position:relative;height:100vh;width:100vw;}
+  .slide{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;
+    padding:clamp(2rem,7vw,6rem);opacity:0;transition:opacity .3s;}
+  .slide.on{display:flex;opacity:1;}
+  .eyebrow{font-family:var(--fm);font-size:clamp(.7rem,1.5vw,.85rem);letter-spacing:.18em;text-transform:uppercase;
+    color:var(--accent);font-weight:600;margin-bottom:1.2rem;display:flex;align-items:center;gap:.7rem;}
+  .eyebrow::before{content:"";width:2.4rem;height:1px;background:var(--accent);}
+  h1{font-family:var(--fh);font-size:clamp(2.4rem,7vw,5rem);line-height:1.02;letter-spacing:-.03em;font-weight:800;
+    color:var(--ink);margin:0 0 1.2rem;text-wrap:balance;max-width:18ch;}
+  h2{font-size:clamp(1.8rem,5vw,3.4rem);line-height:1.08;letter-spacing:-.025em;font-weight:800;color:var(--ink);
+    margin:0 0 1.4rem;text-wrap:balance;max-width:20ch;}
+  .lead{font-size:clamp(1.1rem,2.6vw,1.7rem);line-height:1.4;color:var(--text);max-width:34ch;margin:0;}
+  .lead.big{font-size:clamp(1.4rem,3.4vw,2.2rem);color:var(--ink);max-width:24ch;}
+  .quote{font-size:clamp(1.1rem,2.6vw,1.6rem);font-style:italic;color:var(--accent-strong);border-left:3px solid var(--accent);
+    padding-left:1.1rem;margin-top:2rem;max-width:30ch;}
+  .accent{color:var(--accent-strong);} .cwarn{color:var(--crit);} .cgood{color:var(--good);}
+
+  .statrow{display:flex;flex-wrap:wrap;gap:clamp(1rem,4vw,3rem);margin-top:1.5rem;}
+  .stat .n{font-family:var(--fh);font-weight:800;font-size:clamp(2.4rem,7vw,4.5rem);letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums;}
+  .stat .l{font-family:var(--fm);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:.5rem;}
+  .stat .n.warn{color:var(--crit);} .stat .n.good{color:var(--good);} .stat .n.ink{color:var(--ink);}
+
+  ul.pts{list-style:none;padding:0;margin:1.2rem 0 0;max-width:32ch;display:flex;flex-direction:column;gap:.9rem;}
+  ul.pts li{font-size:clamp(1.05rem,2.4vw,1.5rem);color:var(--text);padding-left:1.6rem;position:relative;line-height:1.35;}
+  ul.pts li::before{content:"";position:absolute;left:0;top:.5em;width:.55rem;height:.55rem;border-radius:3px;background:var(--accent);}
+  ul.pts li b{color:var(--ink);}
+
+  .flow{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin-top:1.6rem;font-size:clamp(1rem,2.4vw,1.5rem);}
+  .flow .step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:.7rem 1.1rem;color:var(--ink);font-weight:600;}
+  .flow .arw{color:var(--accent);font-weight:700;}
+
+  .compose{display:flex;flex-direction:column;gap:.7rem;margin-top:1.4rem;max-width:40ch;}
+  .crow{display:flex;align-items:baseline;gap:.8rem;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:.8rem 1.1rem;}
+  .crow .k{font-family:var(--fm);font-size:.85rem;color:var(--accent-strong);font-weight:700;white-space:nowrap;}
+  .crow .v{font-size:clamp(.95rem,2vw,1.15rem);color:var(--text);}
+
+  /* mini trend */
+  .msvg{margin-top:1.4rem;max-width:520px;width:100%;}
+
+  /* chrome */
+  .bar{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;
+    padding:.7rem 1.1rem;font-family:var(--fm);font-size:.7rem;color:var(--muted);z-index:10;}
+  .bar .toggles{display:flex;gap:.4rem;}
+  .tg{background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:.28rem .7rem;color:var(--muted);cursor:pointer;font-family:var(--fm);font-size:.68rem;}
+  .tg:hover{color:var(--accent-strong);border-color:var(--accent);}
+  .dots{position:fixed;bottom:1.1rem;left:0;right:0;display:flex;justify-content:center;gap:.5rem;z-index:10;}
+  .dot{width:.5rem;height:.5rem;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;}
+  .dot.on{background:var(--accent);}
+  .nav{position:fixed;bottom:1rem;right:1.1rem;display:flex;gap:.4rem;z-index:10;}
+  .nav button{background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:8px;width:2.2rem;height:2.2rem;cursor:pointer;font-size:1rem;}
+  .nav button:hover{border-color:var(--accent);color:var(--accent-strong);}
+  .pageno{position:fixed;bottom:1.2rem;left:1.1rem;font-family:var(--fm);font-size:.7rem;color:var(--muted);z-index:10;}
+  :where(button):focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+  @media print{
+    body{overflow:visible;} .slide{display:flex!important;opacity:1!important;position:relative;height:100vh;page-break-after:always;inset:auto;}
+    .bar,.dots,.nav,.pageno{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="bar">
+  <span>Team AI Cost Radar · Upstage Finals</span>
+  <span class="toggles"><button class="tg" id="lang">EN / KO</button><button class="tg" id="theme">Theme</button></span>
+</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 TITLE -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Upstage Hackathon · Finals · Service for Everyone</span><span class="ko">업스테이지 해커톤 · 결선 · 모두를 위한 서비스</span></div>
+    <h1>Team AI Cost Radar</h1>
+    <p class="lead"><span class="en">Diagnose your team's AI waste. Route it away.</span><span class="ko">팀의 AI 낭비를 진단하고, 라우팅으로 없앤다.</span></p>
+    <div class="quote"><span class="en">"90% of AI coding cost is unnecessary."<br>— Andrej Karpathy</span><span class="ko">"AI 코딩 비용의 90%는 불필요한 비용이다."<br>— Andrej Karpathy</span></div>
+  </section>
+
+  <!-- 2 PROBLEM -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">The problem</span><span class="ko">문제</span></div>
+    <h2><span class="en">The gap isn't skill.<br>It's <span class="accent">routing</span>.</span><span class="ko">격차는 실력이 아니라<br><span class="accent">라우팅</span>이다.</span></h2>
+    <ul class="pts">
+      <li><span class="en"><b>$200/mo</b> vs <b>$4,000/mo</b> developer — same skill, different routing</span><span class="ko"><b>월 $200</b> vs <b>월 $4,000</b> 개발자 — 실력은 같고 라우팅이 다르다</span></li>
+      <li><span class="en">Individuals can't see their own waste</span><span class="ko">개인은 자기 낭비를 잘 못 본다</span></li>
+      <li><span class="en"><b>Teams can't see it at all</b></span><span class="ko"><b>팀은 아예 전체를 못 본다</b></span></li>
+    </ul>
+  </section>
+
+  <!-- 3 SOLUTION -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">The solution</span><span class="ko">해결책</span></div>
+    <h2>Team AI Cost Radar</h2>
+    <p class="lead"><span class="en">Takes a team's AI usage → finds the waste → cuts it with routing policies.</span><span class="ko">팀의 AI 사용을 받아 → 낭비를 찾고 → 라우팅 정책으로 줄인다.</span></p>
+    <div class="flow">
+      <span class="step"><span class="en">Diagnose</span><span class="ko">진단</span></span><span class="arw">→</span>
+      <span class="step"><span class="en">Recommend</span><span class="ko">정책 추천</span></span><span class="arw">→</span>
+      <span class="step"><span class="en">Approve &amp; Track</span><span class="ko">승인 &amp; 추적</span></span>
+    </div>
+    <p class="lead" style="margin-top:1.6rem;font-size:1.1rem;color:var(--muted);">Solar Pro 4 × Timely Agent</p>
+  </section>
+
+  <!-- 4 SUMMARY NUMBERS -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Five-second summary (demo team of 5)</span><span class="ko">5초 요약 (데모: 5인 팀)</span></div>
+    <h2><span class="en">69% of spend is <span class="cwarn">waste</span>.</span><span class="ko">지출의 69%가 <span class="cwarn">낭비</span>다.</span></h2>
+    <div class="statrow">
+      <div class="stat"><div class="n ink">$4,180</div><div class="l"><span class="en">Spend / month</span><span class="ko">월 지출</span></div></div>
+      <div class="stat"><div class="n warn">$2,880</div><div class="l"><span class="en">Est. waste</span><span class="ko">추정 낭비</span></div></div>
+      <div class="stat"><div class="n good">$2,450</div><div class="l"><span class="en">Recoverable</span><span class="ko">절감 가능</span></div></div>
+    </div>
+  </section>
+
+  <!-- 5 DIAGNOSIS -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Diagnosis — 10 waste patterns on team logs</span><span class="ko">진단 — 팀 로그에 10패턴 적용</span></div>
+    <h2><span class="en">Where the money leaks</span><span class="ko">돈이 새는 곳</span></h2>
+    <ul class="pts">
+      <li><span class="en"><b>Over-loading context</b> — 50 files auto-loaded to fix 30 lines</span><span class="ko"><b>과잉 컨텍스트 로딩</b> — 30줄 고치는데 파일 50개</span></li>
+      <li><span class="en"><b>Premium model on mechanical tasks</b> — $0.02 work billed at $0.60</span><span class="ko"><b>기계적 작업에 최상위 모델</b> — $0.02짜리를 $0.60에</span></li>
+      <li><span class="en"><b>62% of spend on the top tier</b> — ~40% of it needs no premium</span><span class="ko"><b>지출의 62%가 최상위 모델</b> — 그중 ~40%는 불필요</span></li>
+    </ul>
+  </section>
+
+  <!-- 6 RESULT -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Result — after routing policy</span><span class="ko">결과 — 라우팅 정책 적용 후</span></div>
+    <h2><span class="en">Weekly cost, down <span class="cgood">41%</span>.</span><span class="ko">주간 비용, <span class="cgood">41%</span> 감소.</span></h2>
+    <svg class="msvg" viewBox="0 0 520 150" role="img" aria-label="Weekly cost drops after policy applied">
+      <line x1="30" y1="130" x2="510" y2="130" stroke="var(--line)"/>
+      <line x1="300" y1="15" x2="300" y2="130" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <text x="306" y="26" font-family="var(--fm)" font-size="11" fill="var(--good)"><tspan class="en">policy</tspan><tspan class="ko">정책</tspan></text>
+      <path d="M30,44 L90,38 L150,46 L210,36 L270,42 L300,48 L370,92 L440,104 L500,98 L500,130 L30,130 Z" fill="var(--accent)" opacity=".14"/>
+      <path d="M30,44 L90,38 L150,46 L210,36 L270,42 L300,48 L370,92 L440,104 L500,98" fill="none" stroke="var(--accent)" stroke-width="2.5"/>
+      <circle cx="500" cy="98" r="5" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/>
+    </svg>
+    <p class="lead" style="font-size:1.05rem;color:var(--muted);margin-top:.6rem;"><span class="en">~$1,050/wk → ~$620/wk, three weeks after policy</span><span class="ko">주당 ~$1,050 → ~$620, 정책 적용 후 3주</span></p>
+  </section>
+
+  <!-- 7 COMPOSITION -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Why it's special</span><span class="ko">차별점</span></div>
+    <h2><span class="en">Our prelim skills,<br>composed into one service.</span><span class="ko">예선 스킬들이<br>하나의 서비스로 결합.</span></h2>
+    <div class="compose">
+      <div class="crow"><span class="k">Token Cost Optimizer</span><span class="v"><span class="en">→ diagnosis engine</span><span class="ko">→ 진단 엔진</span></span></div>
+      <div class="crow"><span class="k">Ops Control Center</span><span class="v"><span class="en">→ cost-spike alerts</span><span class="ko">→ 비용 급증 알림</span></span></div>
+      <div class="crow"><span class="k">Data-Question Guardian</span><span class="v"><span class="en">→ metric trust check</span><span class="ko">→ 숫자 신뢰성 점검</span></span></div>
+    </div>
+    <p class="lead" style="font-size:1.05rem;color:var(--muted);margin-top:1.2rem;"><span class="en">"Skills for me" became a "service for everyone."</span><span class="ko">"나를 위한 스킬"이 "모두를 위한 서비스"로.</span></p>
+  </section>
+
+  <!-- 8 CLOSE -->
+  <section class="slide">
+    <div class="eyebrow"><span class="en">Human-in-the-loop · Close</span><span class="ko">사람이 결정 · 마무리</span></div>
+    <h2><span class="en">The gap isn't skill.<br>It's <span class="accent">routing</span>.</span><span class="ko">격차는 실력이 아니라<br><span class="accent">라우팅</span>이다.</span></h2>
+    <p class="lead"><span class="en">The AI proposes; a human approves. Observable, transparent, accountable — and now the team's default.</span><span class="ko">AI는 제안하고, 사람이 승인한다. 관찰 가능하고, 투명하고, 책임 있게 — 이제 팀의 기본값으로.</span></p>
+    <p class="lead" style="font-size:.95rem;color:var(--muted);margin-top:1.8rem;font-family:var(--fm);">sechan9999.github.io/upstage-agent-skills/FINALS_dashboard.html</p>
+  </section>
+
+</div>
+
+<div class="pageno" id="pageno">1 / 8</div>
+<div class="dots" id="dots"></div>
+<div class="nav"><button id="prev" aria-label="Previous">‹</button><button id="next" aria-label="Next">›</button></div>
+
+<script>
+  (function(){
+    var root=document.documentElement, slides=[].slice.call(document.querySelectorAll('.slide')), i=0;
+    var dots=document.getElementById('dots'), pageno=document.getElementById('pageno');
+    slides.forEach(function(_,k){var b=document.createElement('button');b.className='dot';b.onclick=function(){go(k);};dots.appendChild(b);});
+    var dotEls=[].slice.call(document.querySelectorAll('.dot'));
+    function go(n){i=Math.max(0,Math.min(slides.length-1,n));
+      slides.forEach(function(s,k){s.classList.toggle('on',k===i);});
+      dotEls.forEach(function(d,k){d.classList.toggle('on',k===i);});
+      pageno.textContent=(i+1)+' / '+slides.length;}
+    document.getElementById('next').onclick=function(){go(i+1);};
+    document.getElementById('prev').onclick=function(){go(i-1);};
+    document.addEventListener('keydown',function(e){
+      if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();go(i+1);}
+      else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(i-1);}
+      else if(e.key==='Home'){go(0);} else if(e.key==='End'){go(slides.length-1);}});
+    // theme
+    var th=document.getElementById('theme');
+    try{var s=localStorage.getItem('pb-theme');if(s)root.setAttribute('data-theme',s);}catch(e){}
+    th.onclick=function(){var c=root.getAttribute('data-theme');if(!c)c='dark';var n=c==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('pb-theme',n);}catch(e){}};
+    // lang
+    var lg=document.getElementById('lang');
+    function setL(l){root.setAttribute('data-lang',l);root.setAttribute('lang',l);try{localStorage.setItem('pb-lang',l);}catch(e){}}
+    var sl='en';try{sl=localStorage.getItem('pb-lang')||'en';}catch(e){}setL(sl);
+    lg.onclick=function(){setL(root.getAttribute('data-lang')==='en'?'ko':'en');};
+    go(0);
+  })();
+</script>
+</body>
+</html>
