@@ -53,3 +53,57 @@ Karpathy의 말대로, 격차는 실력이 아니라 라우팅입니다. **Team 
 
 ## 30초 초압축 버전 (엘리베이터)
 "Karpathy는 AI 코딩 비용의 90%가 낭비라고 했습니다. Team AI Cost Radar는 팀의 AI 사용을 진단해 낭비 패턴을 찾고, Solar Pro 4가 라우팅 정책을 제안해 비용을 41% 낮춥니다. 예선에서 만든 스킬 세 개 — 진단·알림·검증 — 가 결합된 서비스이고, 모든 정책은 사람이 승인합니다. 격차는 실력이 아니라 라우팅이니까요."
+
+---
+---
+
+# ENGLISH — Finals Pitch Script (~2:30)
+
+> Dashboard: https://sechan9999.github.io/upstage-agent-skills/FINALS_dashboard.html (toggle to EN)
+> [ ] = screen cue · **bold** = must-land lines
+
+## [0:00–0:20] Hook
+[screen: dashboard top, KPI tiles visible]
+
+"Andrej Karpathy said it: **90% of AI coding cost is unnecessary.**
+Twelve months from now, the gap between a developer spending $200 a month and one spending $4,000 isn't skill — it's **routing**.
+And here's the problem: individuals can't see their own waste — and a **team can't see it at all.**"
+
+## [0:20–0:35] What it is
+"So we built **Team AI Cost Radar** — it takes a team's AI usage, diagnoses where the waste is, and cuts it with routing policies. It runs on Solar Pro 4 and the Timely Agent."
+
+## [0:35–1:40] Demo walkthrough
+[screen: the four KPI tiles]
+"First, the five-second summary. This team spent **$4,180** this month — and **$2,880 of it is estimated waste, 69% of spend.** With routing policies, they could save **$2,450**, and two of three policies are already adopted, securing $1,740 a month."
+
+[screen: 'Top waste drivers' card]
+"Where does the waste come from? We apply the ten patterns senior engineers use, to the team's logs, ranked by dollars. Number one is **over-loading context** — fifty files auto-loaded to fix thirty lines. Then premium models on mechanical tasks, then prompt-cache breakage."
+
+[screen: 'Model mix' stacked bar]
+"Here's the key diagnosis — **62% of spend is on the top-tier model, and about 40% of that is work a cheaper model does at the same quality.**"
+
+[screen: cost trend, policy marker]
+"When the routing policy went live in week six, weekly cost dropped **about 41%.**"
+
+[screen: policy cards]
+"And Solar Pro 4 proposes the routing policies — mechanical work to a low tier, default coding to mid, escalate only the hard tasks — each with its expected savings."
+
+## [1:40–2:10] The core story — skills composed
+[screen: footer]
+"**This service is our preliminary-round skills, combined.**
+Diagnosing waste is **Token Cost Optimizer**. Catching cost spikes is **Ops Control Center**. And checking whether the dashboard numbers can be trusted is **Data-Question Guardian**.
+Our 'skills for me' became the building blocks of a 'service for everyone.'"
+
+## [2:10–2:30] Close
+[screen: policy approve / pending states]
+"And finally — the policies are **proposals; a team lead approves them.** The AI never forces anyone's model choice. It's observable, transparent, and the human decides.
+Like Karpathy said, the gap isn't skill — it's routing. **Team AI Cost Radar makes that routing the team's default.** Thank you."
+
+## Delivery tips (EN)
+- Same line at hook and close ("the gap isn't skill — it's routing") — bookend, memorable.
+- Land two numbers hard: **69%** waste, **41%** down.
+- Own the 1:40 "skills composed" beat — it's the judging hook.
+- Over time? In the demo, keep only model mix + trend.
+
+## 30-sec elevator (EN)
+"Karpathy said 90% of AI coding cost is waste. Team AI Cost Radar diagnoses a team's AI usage, finds the waste patterns, and Solar Pro 4 proposes routing policies that cut cost by 41%. It's three skills we built in the prelims — diagnose, alert, verify — composed into one service, and every policy is human-approved. Because the gap isn't skill — it's routing."
