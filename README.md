@@ -15,6 +15,7 @@
 
 > 예선 한도 = 팀 2인 × 3개 = **6개 전부 제출**. 타임리 크레딧 **8/18 배포**부터 사용.
 > **결선 "모두를 위한 서비스":** [Team AI Cost Radar](./FINALS_team_cost_radar.md) — 팀 AI 비용 대시보드.
+> **대시보드 목업 (EN/KO):** [`FINALS_dashboard.html`](./FINALS_dashboard.html) — 브라우저로 열기.
 
 📄 제출 문서: [`skills_upstage.md`](./skills_upstage.md)
 

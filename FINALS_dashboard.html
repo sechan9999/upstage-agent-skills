@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Team AI Cost Radar — Finals Dashboard Mockup</title>
+<meta name="description" content="Upstage hackathon finals 'service for everyone' — team AI cost-waste diagnosis & routing dashboard (Solar Pro 4 × Timely Agent). EN/KO.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%A1%3C/text%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#F4F6F8;--surface:#FFFFFF;--surface-2:#EDEFF3;--ink:#161D28;--text:#3A4453;
+    --muted:#6B7482;--line:#DBE0E7;--accent:#22687F;--accent-strong:#184F62;
+    --tier-prem:#184F62;--tier-mid:#4E93A8;--tier-low:#A9D2DE;
+    --good:#2C7A5B;--good-soft:#E2EFE8;--warn:#9A6A16;--warn-soft:#F4EAD6;--crit:#A8443C;--crit-soft:#F4E1DE;
+    --shadow:0 1px 2px rgba(22,29,40,.05),0 6px 22px rgba(22,29,40,.07);
+    --fh:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    --fm:"SF Mono","JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+    --fk:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",var(--fh);
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#0F141B;--surface:#161C25;--surface-2:#1D2530;--ink:#ECF1F7;--text:#C0C9D5;--muted:#8892A1;--line:#29323E;
+    --accent:#5AAAC5;--accent-strong:#8AC7DA;--tier-prem:#8AC7DA;--tier-mid:#3E7F94;--tier-low:#254C5A;
+    --good:#6FBF93;--good-soft:#15251C;--warn:#D6A75E;--warn-soft:#271F12;--crit:#E0736A;--crit-soft:#2A1613;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);
+  }}
+  :root[data-theme="light"]{--bg:#F4F6F8;--surface:#FFFFFF;--surface-2:#EDEFF3;--ink:#161D28;--text:#3A4453;--muted:#6B7482;--line:#DBE0E7;--accent:#22687F;--accent-strong:#184F62;--tier-prem:#184F62;--tier-mid:#4E93A8;--tier-low:#A9D2DE;--good:#2C7A5B;--good-soft:#E2EFE8;--warn:#9A6A16;--warn-soft:#F4EAD6;--crit:#A8443C;--crit-soft:#F4E1DE;--shadow:0 1px 2px rgba(22,29,40,.05),0 6px 22px rgba(22,29,40,.07);}
+  :root[data-theme="dark"]{--bg:#0F141B;--surface:#161C25;--surface-2:#1D2530;--ink:#ECF1F7;--text:#C0C9D5;--muted:#8892A1;--line:#29323E;--accent:#5AAAC5;--accent-strong:#8AC7DA;--tier-prem:#8AC7DA;--tier-mid:#3E7F94;--tier-low:#254C5A;--good:#6FBF93;--good-soft:#15251C;--warn:#D6A75E;--warn-soft:#271F12;--crit:#E0736A;--crit-soft:#2A1613;--shadow:0 1px 2px rgba(0,0,0,.3),0 10px 30px rgba(0,0,0,.4);}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--fk);line-height:1.5;
+    -webkit-font-smoothing:antialiased;font-size:14px;}
+  .rad{padding:clamp(1rem,3vw,1.8rem);}
+  .rad .wrap{max-width:1120px;margin:0 auto;}
+  :root[data-lang="en"] .lang-ko{display:none;}
+  :root[data-lang="ko"] .lang-en{display:none;}
+
+  .rad-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.8rem;margin-bottom:.4rem;}
+  .rad-title{display:flex;align-items:center;gap:.6rem;}
+  .rad-title h1{font-family:var(--fh);font-size:clamp(1.2rem,3vw,1.6rem);font-weight:800;letter-spacing:-.02em;color:var(--ink);margin:0;}
+  .rad-title .dot{width:.6rem;height:.6rem;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft);}
+  .rad-sub{color:var(--muted);font-size:.82rem;margin:0 0 1rem;}
+  .rad-ctl{display:flex;gap:.4rem;align-items:center;font-family:var(--fm);font-size:.72rem;flex-wrap:wrap;}
+  .rad-pill{background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:.32rem .7rem;color:var(--muted);}
+  .rad-pill.demo{background:linear-gradient(135deg,#f5a623,#f7c948);color:#11111b;font-weight:800;border:none;}
+  .langtabs{display:inline-flex;gap:.2rem;padding:.2rem;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;}
+  .langtabs button{font-family:var(--fm);font-size:.7rem;color:var(--muted);background:transparent;border:0;border-radius:999px;padding:.3rem .7rem;cursor:pointer;}
+  .langtabs button[aria-selected="true"]{background:var(--accent);color:#fff;font-weight:700;}
+
+  .tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:.8rem;margin-bottom:1rem;}
+  @media(min-width:760px){.tiles{grid-template-columns:repeat(4,1fr);}}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1rem 1.1rem;box-shadow:var(--shadow);}
+  .tile .lab{font-family:var(--fm);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .tile .val{font-family:var(--fh);font-size:1.9rem;font-weight:800;letter-spacing:-.02em;margin:.25rem 0 .1rem;font-variant-numeric:tabular-nums;}
+  .tile .sub{font-size:.76rem;display:flex;align-items:center;gap:.35rem;flex-wrap:wrap;}
+  .tile .val.ink{color:var(--ink);} .tile .val.warn{color:var(--crit);} .tile .val.good{color:var(--good);}
+  .chip{font-family:var(--fm);font-size:.66rem;padding:.12rem .45rem;border-radius:6px;font-weight:600;}
+  .chip.good{background:var(--good-soft);color:var(--good);} .chip.warn{background:var(--warn-soft);color:var(--warn);} .chip.crit{background:var(--crit-soft);color:var(--crit);}
+
+  .grid{display:grid;grid-template-columns:1fr;gap:.8rem;}
+  @media(min-width:760px){.grid{grid-template-columns:1.3fr 1fr;}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:1.1rem 1.2rem;box-shadow:var(--shadow);min-width:0;}
+  .card h3{font-family:var(--fh);font-size:.95rem;font-weight:700;color:var(--ink);margin:0 0 .1rem;}
+  .card .cap{font-size:.74rem;color:var(--muted);margin:0 0 .9rem;}
+
+  .wbar{display:flex;flex-direction:column;gap:.6rem;}
+  .wrow{display:grid;grid-template-columns:1fr auto;gap:.3rem .6rem;align-items:center;}
+  .wname{font-size:.82rem;color:var(--ink);}
+  .wamt{font-family:var(--fm);font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums;}
+  .wtrack{grid-column:1/-1;height:9px;background:var(--surface-2);border-radius:5px;overflow:hidden;}
+  .wfill{height:100%;border-radius:5px;background:var(--warn);} .wfill.top{background:var(--crit);}
+
+  .mix{display:flex;height:26px;border-radius:7px;overflow:hidden;gap:2px;background:var(--surface);margin:.2rem 0 .8rem;}
+  .mseg{height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--fm);font-size:.68rem;font-weight:700;color:#fff;}
+  .mseg.prem{background:var(--tier-prem);} .mseg.mid{background:var(--tier-mid);} .mseg.low{background:var(--tier-low);color:var(--ink);}
+  .mlegend{display:flex;flex-wrap:wrap;gap:.8rem;font-size:.74rem;color:var(--muted);}
+  .mlegend span{display:inline-flex;align-items:center;gap:.35rem;}
+  .sw{width:.7rem;height:.7rem;border-radius:3px;display:inline-block;}
+
+  .trend-note{font-size:.72rem;color:var(--good);font-family:var(--fm);margin-top:.3rem;}
+  .tbl{width:100%;border-collapse:collapse;font-size:.82rem;}
+  .tbl th{font-family:var(--fm);font-size:.64rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-align:left;font-weight:600;padding:.4rem .5rem;border-bottom:1px solid var(--line);}
+  .tbl td{padding:.5rem .5rem;border-bottom:1px solid var(--line);vertical-align:middle;}
+  .tbl td:last-child,.tbl th:last-child{text-align:right;font-variant-numeric:tabular-nums;}
+  .tbl tr:last-child td{border-bottom:none;}
+  .mini{display:inline-flex;height:7px;width:70px;border-radius:4px;overflow:hidden;gap:1px;vertical-align:middle;}
+  .mini i{height:100%;display:block;}
+
+  .pol{display:flex;flex-direction:column;gap:.6rem;}
+  .pcard{border:1px solid var(--line);border-radius:10px;padding:.8rem .9rem;background:var(--surface);}
+  .pcard .prow{display:flex;justify-content:space-between;align-items:flex-start;gap:.6rem;}
+  .pcard .prule{font-size:.84rem;color:var(--ink);font-weight:600;}
+  .pcard .psave{font-family:var(--fm);font-size:.78rem;color:var(--good);white-space:nowrap;}
+  .pcard .pmeta{font-size:.74rem;color:var(--muted);margin-top:.25rem;}
+  .pstate{font-family:var(--fm);font-size:.64rem;font-weight:700;padding:.16rem .5rem;border-radius:999px;letter-spacing:.03em;}
+  .pstate.ok{background:var(--good-soft);color:var(--good);} .pstate.pend{background:var(--warn-soft);color:var(--warn);}
+
+  .foot{color:var(--muted);font-size:.72rem;margin-top:1.1rem;border-top:1px solid var(--line);padding-top:.7rem;}
+  .foot b{color:var(--ink);}
+  .themebtn{position:fixed;right:1rem;bottom:1rem;font-family:var(--fm);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:.45rem .85rem;cursor:pointer;box-shadow:var(--shadow);}
+  .themebtn:hover{color:var(--accent-strong);border-color:var(--accent);}
+  :where(button):focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+</style>
+</head>
+<body>
+<div class="rad"><div class="wrap">
+  <div class="rad-top">
+    <div class="rad-title"><span class="dot"></span><h1>Team AI Cost Radar</h1></div>
+    <div class="rad-ctl">
+      <span class="langtabs"><button id="btn-en" aria-selected="true" type="button">EN</button><button id="btn-ko" aria-selected="false" type="button">KO</button></span>
+      <span class="rad-pill">Platform Eng (5)</span>
+      <span class="rad-pill"><span class="lang-en">This month</span><span class="lang-ko">이번 달</span></span>
+      <span class="rad-pill demo">DEMO</span>
+    </div>
+  </div>
+  <p class="rad-sub"><span class="lang-en">Diagnose wasted AI spend across the team and cut it with routing policies · Solar Pro 4 × Timely Agent</span><span class="lang-ko">팀 전체 AI 사용의 낭비를 진단하고, 라우팅 정책으로 절감합니다 · Solar Pro 4 × Timely Agent</span></p>
+
+  <div class="tiles">
+    <div class="tile"><div class="lab"><span class="lang-en">Spend this month</span><span class="lang-ko">이번 달 지출</span></div><div class="val ink">$4,180</div><div class="sub"><span class="chip warn"><span class="lang-en">↑ 12% vs last mo.</span><span class="lang-ko">↑ 12% vs 지난달</span></span></div></div>
+    <div class="tile"><div class="lab"><span class="lang-en">Est. waste</span><span class="lang-ko">추정 낭비</span></div><div class="val warn">$2,880</div><div class="sub"><span class="chip crit"><span class="lang-en">69% of spend</span><span class="lang-ko">지출의 69%</span></span></div></div>
+    <div class="tile"><div class="lab"><span class="lang-en">Potential savings</span><span class="lang-ko">절감 가능</span></div><div class="val good">$2,450</div><div class="sub"><span class="lang-en">if policies applied</span><span class="lang-ko">라우팅 정책 적용 시</span></div></div>
+    <div class="tile"><div class="lab"><span class="lang-en">Policies adopted</span><span class="lang-ko">정책 채택</span></div><div class="val ink">2/3</div><div class="sub"><span class="chip good"><span class="lang-en">$1,740/mo secured</span><span class="lang-ko">$1,740/mo 확보</span></span></div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h3><span class="lang-en">Top waste drivers</span><span class="lang-ko">낭비 Top 원인</span></h3>
+      <p class="cap"><span class="lang-en">10-pattern diagnosis applied to team logs · by $</span><span class="lang-ko">10패턴 진단을 팀 로그에 적용 · 금액순</span></p>
+      <div class="wbar">
+        <div class="wrow"><span class="wname"><span class="lang-en">(1) Over-loading context (auto-loaded files)</span><span class="lang-ko">① 과잉 컨텍스트 로딩 (파일 자동 로드)</span></span><span class="wamt">$980</span><div class="wtrack"><div class="wfill top" style="width:100%"></div></div></div>
+        <div class="wrow"><span class="wname"><span class="lang-en">(7) Premium model on mechanical tasks</span><span class="lang-ko">⑦ 기계적 작업에 최상위 모델</span></span><span class="wamt">$760</span><div class="wtrack"><div class="wfill" style="width:78%"></div></div></div>
+        <div class="wrow"><span class="wname"><span class="lang-en">(4) Prompt-cache breakage (prefix churn)</span><span class="lang-ko">④ 프롬프트 캐시 깨짐 (prefix 변경)</span></span><span class="wamt">$520</span><div class="wtrack"><div class="wfill" style="width:53%"></div></div></div>
+        <div class="wrow"><span class="wname"><span class="lang-en">(3) Full-repo resend on retries</span><span class="lang-ko">③ 재시도마다 전체 리포 재전송</span></span><span class="wamt">$360</span><div class="wtrack"><div class="wfill" style="width:37%"></div></div></div>
+        <div class="wrow"><span class="wname"><span class="lang-en">(2) "Just in case" files in prompt</span><span class="lang-ko">② "혹시 몰라서" 파일 포함</span></span><span class="wamt">$260</span><div class="wtrack"><div class="wfill" style="width:27%"></div></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="lang-en">Model mix (share of spend)</span><span class="lang-ko">모델 믹스 (지출 비중)</span></h3>
+      <p class="cap"><span class="lang-en">Too many mechanical tasks land on the top-tier model</span><span class="lang-ko">기계적 작업의 상당수가 최상위 모델에 몰림</span></p>
+      <div class="mix">
+        <div class="mseg prem" style="width:62%">Premium 62%</div>
+        <div class="mseg mid" style="width:26%">Mid 26%</div>
+        <div class="mseg low" style="width:12%">Low 12%</div>
+      </div>
+      <div class="mlegend">
+        <span><i class="sw" style="background:var(--tier-prem)"></i><span class="lang-en">Premium (top)</span><span class="lang-ko">Premium (최상위)</span></span>
+        <span><i class="sw" style="background:var(--tier-mid)"></i><span class="lang-en">Mid</span><span class="lang-ko">Mid (중가)</span></span>
+        <span><i class="sw" style="background:var(--tier-low)"></i><span class="lang-en">Low</span><span class="lang-ko">Low (저가)</span></span>
+      </div>
+      <p class="cap" style="margin-top:.9rem;margin-bottom:0;"><span class="lang-en">→ Diagnosis: ~<b style="color:var(--ink)">40%</b> of work fine on a cheaper tier runs on Premium.</span><span class="lang-ko">→ 진단: 저가로 충분한 작업의 <b style="color:var(--ink)">약 40%</b>가 Premium에서 실행 중.</span></p>
+    </div>
+
+    <div class="card">
+      <h3><span class="lang-en">Weekly cost — before / after policy</span><span class="lang-ko">주간 비용 추세 — 정책 적용 전/후</span></h3>
+      <p class="cap"><span class="lang-en">Drops after routing policy approved in week 6</span><span class="lang-ko">6주차 라우팅 정책 승인 후 하락</span></p>
+      <svg viewBox="0 0 520 180" width="100%" height="170" role="img" aria-label="Weekly AI cost trend; drops after routing policy applied at week 6">
+        <g stroke="var(--line)" stroke-width="1">
+          <line x1="40" y1="20" x2="40" y2="150"/><line x1="40" y1="150" x2="510" y2="150"/>
+          <line x1="40" y1="65" x2="510" y2="65" stroke-dasharray="3 4" opacity=".5"/>
+          <line x1="40" y1="107" x2="510" y2="107" stroke-dasharray="3 4" opacity=".5"/>
+        </g>
+        <g font-family="var(--fm)" font-size="9" fill="var(--muted)">
+          <text x="34" y="24" text-anchor="end">$1.2k</text><text x="34" y="110" text-anchor="end">$0.6k</text><text x="34" y="153" text-anchor="end">$0</text>
+        </g>
+        <line x1="320" y1="20" x2="320" y2="150" stroke="var(--good)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <text x="324" y="30" font-family="var(--fm)" font-size="9" fill="var(--good)" class="lang-en">Policy applied</text>
+        <text x="324" y="30" font-family="var(--fm)" font-size="9" fill="var(--good)" class="lang-ko">정책 적용</text>
+        <path d="M40,58 L94,52 L148,60 L202,50 L256,55 L320,62 L384,104 L448,116 L502,110 L502,150 L40,150 Z" fill="var(--accent)" opacity=".12"/>
+        <path d="M40,58 L94,52 L148,60 L202,50 L256,55 L320,62 L384,104 L448,116 L502,110" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="502" cy="110" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>
+        <circle cx="320" cy="62" r="3.5" fill="var(--good)" stroke="var(--surface)" stroke-width="2"/>
+      </svg>
+      <p class="trend-note"><span class="lang-en">~$1,050/wk → ~$620/wk (about 41% down), 3 weeks after policy</span><span class="lang-ko">주당 ~$1,050 → ~$620 (약 41%↓), 정책 적용 후 3주</span></p>
+    </div>
+
+    <div class="card">
+      <h3><span class="lang-en">Per-member breakdown</span><span class="lang-ko">팀원별 분해</span></h3>
+      <p class="cap"><span class="lang-en">For coaching, not blame · spend / top waste / model mix</span><span class="lang-ko">비난이 아니라 코칭 대상 식별 · 지출/최대 낭비/모델 믹스</span></p>
+      <table class="tbl">
+        <thead><tr><th><span class="lang-en">Member</span><span class="lang-ko">팀원</span></th><th><span class="lang-en">Top waste cause</span><span class="lang-ko">최대 낭비 원인</span></th><th><span class="lang-en">Mix</span><span class="lang-ko">믹스</span></th><th><span class="lang-en">Spend</span><span class="lang-ko">지출</span></th></tr></thead>
+        <tbody>
+          <tr><td>Jae</td><td><span class="lang-en">Over-loading</span><span class="lang-ko">과잉 로딩</span></td><td><span class="mini"><i style="width:70%;background:var(--tier-prem)"></i><i style="width:20%;background:var(--tier-mid)"></i><i style="width:10%;background:var(--tier-low)"></i></span></td><td>$1,120</td></tr>
+          <tr><td>Min</td><td><span class="lang-en">Premium on lint</span><span class="lang-ko">린트에 최상위 모델</span></td><td><span class="mini"><i style="width:64%;background:var(--tier-prem)"></i><i style="width:24%;background:var(--tier-mid)"></i><i style="width:12%;background:var(--tier-low)"></i></span></td><td>$890</td></tr>
+          <tr><td>Alex</td><td><span class="lang-en">Retry full resend</span><span class="lang-ko">재시도 전체 재전송</span></td><td><span class="mini"><i style="width:58%;background:var(--tier-prem)"></i><i style="width:30%;background:var(--tier-mid)"></i><i style="width:12%;background:var(--tier-low)"></i></span></td><td>$780</td></tr>
+          <tr><td>Soo</td><td><span class="lang-en">Cache breakage</span><span class="lang-ko">캐시 깨짐</span></td><td><span class="mini"><i style="width:60%;background:var(--tier-prem)"></i><i style="width:26%;background:var(--tier-mid)"></i><i style="width:14%;background:var(--tier-low)"></i></span></td><td>$720</td></tr>
+          <tr><td>Lee</td><td><span class="lang-en">"Just in case" files</span><span class="lang-ko">"혹시 몰라서" 파일</span></td><td><span class="mini"><i style="width:55%;background:var(--tier-prem)"></i><i style="width:30%;background:var(--tier-mid)"></i><i style="width:15%;background:var(--tier-low)"></i></span></td><td>$670</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:.8rem;">
+    <h3><span class="lang-en">Proposed routing policies</span><span class="lang-ko">제안된 라우팅 정책</span> <span style="font-weight:400;color:var(--muted);font-size:.8rem;"><span class="lang-en">— recommended by Solar Pro 4 · approved by team lead</span><span class="lang-ko">— Solar Pro 4 추천 · 팀 리드 승인</span></span></h3>
+    <p class="cap"><span class="lang-en">Policies are proposals; execution requires human approval (human-in-the-loop)</span><span class="lang-ko">정책은 제안이고, 실행은 사람 승인 후 (human-in-the-loop)</span></p>
+    <div class="pol">
+      <div class="pcard"><div class="prow">
+        <div><div class="prule"><span class="lang-en">Mechanical tasks (lint/format/rename) → low-tier model</span><span class="lang-ko">기계적 작업(lint·format·rename) → 저가 모델</span></div><div class="pmeta"><span class="lang-en">Fixes $0.02 work billed at $0.60 · same quality</span><span class="lang-ko">$0.02짜리를 $0.60에 쓰던 것 교정 · 품질 동급</span></div></div>
+        <div style="text-align:right;"><div class="psave">−$760/mo</div><div style="margin-top:.3rem;"><span class="pstate ok"><span class="lang-en">✓ Approved</span><span class="lang-ko">✓ 승인됨</span></span></div></div>
+      </div></div>
+      <div class="pcard"><div class="prow">
+        <div><div class="prule"><span class="lang-en">Default coding → mid-tier, escalate only hard tasks</span><span class="lang-ko">기본 코딩 → 중가 모델, 어려운 작업만 승급</span></div><div class="pmeta"><span class="lang-en">Most work fine on a 1/6-price model, same quality</span><span class="lang-ko">대부분 작업은 1/6 가격 모델로 동일 품질</span></div></div>
+        <div style="text-align:right;"><div class="psave">−$980/mo</div><div style="margin-top:.3rem;"><span class="pstate ok"><span class="lang-en">✓ Approved</span><span class="lang-ko">✓ 승인됨</span></span></div></div>
+      </div></div>
+      <div class="pcard"><div class="prow">
+        <div><div class="prule"><span class="lang-en">Stabilize prompt prefix (preserve cache)</span><span class="lang-ko">프롬프트 prefix 고정 (캐시 보존)</span></div><div class="pmeta"><span class="lang-en">Move variable parts to the end → avoid cache invalidation</span><span class="lang-ko">가변 부분을 뒤로 → 캐시 무효화 방지</span></div></div>
+        <div style="text-align:right;"><div class="psave">−$520/mo</div><div style="margin-top:.3rem;"><span class="pstate pend"><span class="lang-en">⏳ Pending</span><span class="lang-ko">⏳ 검토 중</span></span></div></div>
+      </div></div>
+    </div>
+  </div>
+
+  <p class="foot">💡 <span class="lang-en"><b>Service for everyone</b> — the personal Token Cost Optimizer, scaled to the whole team. Composed of three preliminary-round skills: Token Cost Optimizer (diagnosis) + Ops Control Center (spike alerts) + Data-Question Guardian (metric trust). <b>Demo simulation data</b> · Solar Pro 4 × Timely Agent.</span><span class="lang-ko"><b>모두를 위한 서비스</b> — 개인용 Token Cost Optimizer를 팀 전체로 확장. 예선 스킬 3개가 결합: Token Cost Optimizer(진단) + Ops Control Center(이상 알림) + Data-Question Guardian(숫자 신뢰성). <b>데모용 시뮬레이션 데이터</b> · Solar Pro 4 × Timely Agent.</span></p>
+</div></div>
+
+<button class="themebtn" id="tb" type="button" aria-label="Toggle theme">Theme</button>
+<script>
+  (function(){
+    var r=document.documentElement;
+    try{var s=localStorage.getItem('pb-theme');if(s)r.setAttribute('data-theme',s);}catch(e){}
+    document.getElementById('tb').addEventListener('click',function(){var c=r.getAttribute('data-theme');if(!c)c=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';var n=c==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem('pb-theme',n);}catch(e){}});
+    var en=document.getElementById('btn-en'),ko=document.getElementById('btn-ko');
+    function setL(l){r.setAttribute('data-lang',l);r.setAttribute('lang',l);en.setAttribute('aria-selected',l==='en');ko.setAttribute('aria-selected',l==='ko');try{localStorage.setItem('pb-lang',l);}catch(e){}}
+    var sl='en';try{sl=localStorage.getItem('pb-lang')||'en';}catch(e){}setL(sl);
+    en.onclick=function(){setL('en');};ko.onclick=function(){setL('ko');};
+  })();
+</script>
+</body>
+</html>
