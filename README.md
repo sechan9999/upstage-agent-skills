@@ -21,6 +21,15 @@
 
 📄 제출 문서: [`skills_upstage.md`](./skills_upstage.md)
 
+
+### 추가 고급 에이전트 스킬 (Advanced Agent Skills)
+
+| 스킬 | 설명 |
+|------|------|
+| [AI Hedge Fund](./skills/ai-hedge-fund/SKILL.md) | 모듈형 에이전트 조직(CIO/CRO/CTO) 기반 퀀트 리서치·yfinance/DuckDB 데이터 연동·벡터화 백테스트·2단계 리스크 중립화 |
+| [Excel Analyzer](./skills/excel-analyzer/SKILL.md) | 엑셀/CSV 파일 자동 구조 파악, 4분위(Q1~Q4) 전 구간 분석, 하단 합계행 분리 및 무결성 진단 |
+| [Job Search Toolkit](./skills/job-search-toolkit/SKILL.md) ([日本語版](./skills/job-search-toolkit/skill_j.md)) | 채용공고 대비 이력서 정확도 스코어링, CV 맞춤 최적화, 면접 역질문 준비 팩 (한/일 지원) |
+
 ## 구조
 ```
 skills_upstage.md              예선 제출 개요 (6종)
