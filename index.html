@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="ko" data-lang="ko" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AURA — Autonomous Quantitative AI Hedge Fund Operations Desk</title>
+<meta name="description" content="AQR-Style Modular Multi-Agent AI Hedge Fund Architecture (CIO/CRO/CTO + Quant/Macro PM + Senior Research). Deterministic G0-G3 Gates, DuckDB/yfinance data feeds, Vectorized Backtest, and Firm-Wide Risk Collision Matrix.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%88%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;400;500;600;700;800&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-base: #0a0d14;
+    --bg-surface: #101522;
+    --bg-card: #151c2e;
+    --bg-card-hover: #1c263d;
+    --border: #222d46;
+    --border-bright: #324268;
+    
+    --ink: #f0f4fc;
+    --text: #cbd5e1;
+    --muted: #8092ab;
+    --subtle: #4f617d;
+    
+    --primary: #38bdf8;
+    --primary-glow: rgba(56, 189, 248, 0.25);
+    --accent: #6366f1;
+    --accent-glow: rgba(99, 102, 241, 0.25);
+    
+    --good: #10b981;
+    --good-soft: rgba(16, 185, 129, 0.15);
+    --warn: #f59e0b;
+    --warn-soft: rgba(245, 158, 11, 0.15);
+    --danger: #ef4444;
+    --danger-soft: rgba(239, 68, 68, 0.15);
+    --purple: #a855f7;
+    
+    --font-heading: 'Outfit', -apple-system, sans-serif;
+    --font-body: 'Pretendard', -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+    
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --shadow-card: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 0 1px var(--border);
+  }
+
+  [data-theme="light"] {
+    --bg-base: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-card: #f1f5f9;
+    --bg-card-hover: #e2e8f0;
+    --border: #cbd5e1;
+    --border-bright: #94a3b8;
+    --ink: #0f172a;
+    --text: #334155;
+    --muted: #64748b;
+    --subtle: #94a3b8;
+    --primary: #0284c7;
+    --primary-glow: rgba(2, 132, 199, 0.15);
+    --shadow-card: 0 4px 20px -2px rgba(15, 23, 42, 0.08), 0 0 0 1px var(--border);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--bg-base);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    overflow-x: hidden;
+    padding-bottom: 60px;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  /* Header Bar */
+  header {
+    background: rgba(16, 21, 34, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    padding: 14px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .brand-logo {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 20px;
+    box-shadow: 0 0 16px var(--primary-glow);
+  }
+  .brand-text h1 {
+    font-family: var(--font-heading);
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .brand-text p {
+    font-size: 12px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .badge-live {
+    background: var(--good-soft);
+    color: var(--good);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .pulse-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--good);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--good);
+    animation: pulse 1.8s infinite;
+  }
+  @keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 1; }
+    100% { transform: scale(0.9); opacity: 0.8; }
+  }
+
+  .btn-toggle {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn-toggle:hover {
+    border-color: var(--primary);
+    color: var(--ink);
+  }
+  .btn-run {
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: #ffffff;
+    border: none;
+    padding: 7px 16px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 12px var(--primary-glow);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn-run:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 18px var(--accent-glow);
+  }
+
+  /* Main Container */
+  .container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Executive KPI Cards Grid */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+  }
+  .kpi-card {
+    background: var(--bg-surface);
+    border-radius: var(--radius-md);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-accent, var(--primary));
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .kpi-value {
+    font-family: var(--font-heading);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .kpi-sub {
+    font-size: 12px;
+    font-family: var(--font-mono);
+    color: var(--good);
+  }
+  .kpi-sub.warn { color: var(--warn); }
+  .kpi-sub.danger { color: var(--danger); }
+
+  /* Section Header */
+  .section-title {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  /* Interactive Multi-Agent Orchestration Map */
+  .orch-panel {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+  }
+  .gate-pipeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    position: relative;
+    margin-top: 12px;
+  }
+  .agent-node {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+  .agent-node:hover, .agent-node.active {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px var(--primary-glow);
+  }
+  .node-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .node-role {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gate-tag {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(56, 189, 248, 0.15);
+    color: var(--primary);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+  }
+  .gate-tag.g0 { color: #38bdf8; border-color: rgba(56, 189, 248, 0.4); }
+  .gate-tag.g1 { color: #a855f7; border-color: rgba(168, 85, 247, 0.4); }
+  .gate-tag.g2 { color: #f59e0b; border-color: rgba(245, 158, 11, 0.4); }
+  .gate-tag.g3 { color: #10b981; border-color: rgba(16, 185, 129, 0.4); }
+
+  .node-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .node-tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .tool-pill {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    padding: 2px 6px;
+    border-radius: 3px;
+  }
+  .node-status-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+    font-size: 11px;
+    font-family: var(--font-mono);
+  }
+
+  /* Node Details Drawer */
+  .node-inspector {
+    background: var(--bg-card);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    margin-top: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  /* Two Column Dashboard Grid */
+  .dashboard-columns {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+  }
+  @media (max-width: 1024px) {
+    .dashboard-columns { grid-template-columns: 1fr; }
+    .node-inspector { grid-template-columns: 1fr; }
+  }
+
+  /* Charts & Tables */
+  .card-panel {
+    background: var(--bg-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .chart-container {
+    width: 100%;
+    height: 220px;
+    position: relative;
+  }
+  svg.line-chart {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+  }
+
+  /* Risk & Collision Matrix */
+  .collision-alert {
+    background: var(--warn-soft);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .collision-alert svg {
+    flex-shrink: 0;
+    color: var(--warn);
+  }
+  .collision-alert h4 {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+  .collision-alert p {
+    font-size: 12px;
+    color: var(--text);
+    margin-top: 2px;
+  }
+
+  .bar-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .bar-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+  .bar-track {
+    background: var(--bg-card);
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--primary);
+    transition: width 0.6s ease;
+  }
+  .bar-limit-marker {
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: var(--danger);
+    z-index: 2;
+  }
+
+  /* Terminal / Logs */
+  .terminal-box {
+    background: #07090e;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    max-height: 240px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .log-line {
+    display: flex;
+    gap: 10px;
+  }
+  .log-time { color: var(--subtle); }
+  .log-tag { font-weight: 700; }
+  .log-tag.G0 { color: var(--primary); }
+  .log-tag.G1 { color: var(--purple); }
+  .log-tag.G2 { color: var(--warn); }
+  .log-tag.G3 { color: var(--good); }
+  .log-msg { color: var(--text); }
+
+  /* Allocation Table */
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+  table.data-table th, table.data-table td {
+    padding: 8px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  table.data-table th {
+    color: var(--muted);
+    font-weight: 600;
+    background: var(--bg-card);
+  }
+  table.data-table tr:hover td {
+    background: var(--bg-card-hover);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-logo">A</div>
+    <div class="brand-text">
+      <h1>AURA Operations Desk <span class="badge-live"><span class="pulse-dot"></span> LIVE PAPER RUN</span></h1>
+      <p>Autonomous Quantitative Multi-Agent Hedge Fund · AQR Framework</p>
+    </div>
+  </div>
+
+  <div class="nav-actions">
+    <button class="btn-toggle" id="langToggle">EN / 한국어</button>
+    <button class="btn-toggle" id="themeToggle">🌓 Theme</button>
+    <button class="btn-run" id="runPipelineBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <span class="t-run">파이프라인 실행</span>
+    </button>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Executive KPI Deck -->
+  <section class="kpi-grid">
+    <div class="kpi-card" style="--card-accent: var(--primary);">
+      <div class="kpi-label"><span class="t-kpi1-l">넷 샤프 지수</span> <span>vs SPY 1.05</span></div>
+      <div class="kpi-value">2.14</div>
+      <div class="kpi-sub">▲ +1.09 Alpha Spread</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: var(--good);">
+      <div class="kpi-label"><span class="t-kpi2-l">연환산 순수익률</span> <span>Net of Fees</span></div>
+      <div class="kpi-value">+23.8%</div>
+      <div class="kpi-sub">10 bps Slippage Deducted</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: var(--warn);">
+      <div class="kpi-label"><span class="t-kpi3-l">최대 낙폭 (MDD)</span> <span>Budget: -15.0%</span></div>
+      <div class="kpi-value">-6.4%</div>
+      <div class="kpi-sub warn">Safe within Risk Budget</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: var(--purple);">
+      <div class="kpi-label"><span class="t-kpi4-l">시장 넷 베타</span> <span>Market Neutral</span></div>
+      <div class="kpi-value">+0.02</div>
+      <div class="kpi-sub">Target: ±0.05 Bound</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: var(--accent);">
+      <div class="kpi-label"><span class="t-kpi5-l">통합 금리 민감도</span> <span>CRO Hard Limit</span></div>
+      <div class="kpi-value">0.34</div>
+      <div class="kpi-sub">Limit: ≤ 0.60 (Cleared)</div>
+    </div>
+
+    <div class="kpi-card" style="--card-accent: #e2e8f0;">
+      <div class="kpi-label"><span class="t-kpi6-l">일일 토큰 소진량</span> <span>80% Circuit Cap</span></div>
+      <div class="kpi-value">142.5k</div>
+      <div class="kpi-sub">31.6% of 450k Limit ($1.42)</div>
+    </div>
+  </section>
+
+  <!-- Interactive Agent Pipeline Map -->
+  <section class="orch-panel">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      <span class="t-map-title">멀티에이전트 오케스트레이션 및 게이트키퍼 맵</span>
+    </div>
+    <p style="font-size: 13px; color: var(--muted);" class="t-map-sub">
+      에이전트 노드를 클릭하면 해당 계층의 실시간 연산 스펙, 승인 게이트 판정 규칙 및 되돌림 경로(Return Path)를 확인할 수 있습니다.
+    </p>
+
+    <div class="gate-pipeline">
+      <!-- Node 1: CTO -->
+      <div class="agent-node active" data-node="cto">
+        <div class="node-header">
+          <span class="node-role">⚙️ CTO / Engineer</span>
+          <span class="gate-tag g0">Gate G0</span>
+        </div>
+        <div class="node-desc t-cto-desc">yfinance 수집 데이터 검증 및 DuckDB 시계열 파이프라인 무결성 감사.</div>
+        <div class="node-tools">
+          <span class="tool-pill">yfinance</span>
+          <span class="tool-pill">DuckDB</span>
+          <span class="tool-pill">PIT Align</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--good);">● G0 APPROVED</span>
+          <span style="color: var(--subtle);">0 Err / 5</span>
+        </div>
+      </div>
+
+      <!-- Node 2: Junior Research -->
+      <div class="agent-node" data-node="jr_res">
+        <div class="node-header">
+          <span class="node-role">🔬 Junior Researcher</span>
+          <span class="gate-tag">Alpha Gen</span>
+        </div>
+        <div class="node-desc t-jr-desc">12-1 모멘텀, 저변동성, 단기반전 크로스섹셔널 가설 수립.</div>
+        <div class="node-tools">
+          <span class="tool-pill">NumPy</span>
+          <span class="tool-pill">Z-Score</span>
+          <span class="tool-pill">Cross-Section</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--primary);">● 3 Signals Generated</span>
+          <span style="color: var(--subtle);">v1.4.2</span>
+        </div>
+      </div>
+
+      <!-- Node 3: Senior Research -->
+      <div class="agent-node" data-node="sr_res">
+        <div class="node-header">
+          <span class="node-role">📊 Senior Researcher</span>
+          <span class="gate-tag g1">Gate G1</span>
+        </div>
+        <div class="node-desc t-sr-desc">과적합 필터링, 10bps 비용 차감 후 Net Sharpe 및 t-stat 검증.</div>
+        <div class="node-tools">
+          <span class="tool-pill">Vectorized Backtest</span>
+          <span class="tool-pill">t-stat</span>
+          <span class="tool-pill">Turnover</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--good);">● G1 APPROVED</span>
+          <span style="color: var(--subtle);">0 Rej / 3</span>
+        </div>
+      </div>
+
+      <!-- Node 4: PM Desks -->
+      <div class="agent-node" data-node="pm">
+        <div class="node-header">
+          <span class="node-role">💼 PM Desks</span>
+          <span class="gate-tag">Execution</span>
+        </div>
+        <div class="node-desc t-pm-desc">Quant PM(60%) + Macro PM(40%) 독립 타깃 포지션 가중치 산출.</div>
+        <div class="node-tools">
+          <span class="tool-pill">Quant L/S</span>
+          <span class="tool-pill">Rates Duration</span>
+          <span class="tool-pill">Arb</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--primary);">● 10 Assets Loaded</span>
+          <span style="color: var(--subtle);">Leverage 1.0x</span>
+        </div>
+      </div>
+
+      <!-- Node 5: CRO -->
+      <div class="agent-node" data-node="cro">
+        <div class="node-header">
+          <span class="node-role">🛡️ CRO / Risk Desk</span>
+          <span class="gate-tag g2">Gate G2</span>
+        </div>
+        <div class="node-desc t-cro-desc">2단계 검증: PM 개별 한도 승인 + Firm-wide 금리/섹터 노출 충돌 방지.</div>
+        <div class="node-tools">
+          <span class="tool-pill">Firm-Wide Radar</span>
+          <span class="tool-pill">VaR 99%</span>
+          <span class="tool-pill">Neutralizer</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--good);">● G2 TWO-TIER PASS</span>
+          <span style="color: var(--subtle);">Rate Sens 0.34</span>
+        </div>
+      </div>
+
+      <!-- Node 6: CIO -->
+      <div class="agent-node" data-node="cio">
+        <div class="node-header">
+          <span class="node-role">👑 CIO / Human Gate</span>
+          <span class="gate-tag g3">Gate G3</span>
+        </div>
+        <div class="node-desc t-cio-desc">최종 자본 배분 및 모의 운용/실거래 릴리즈 승인 (비가역 조치 통제).</div>
+        <div class="node-tools">
+          <span class="tool-pill">Mandate Release</span>
+          <span class="tool-pill">Token Guard</span>
+        </div>
+        <div class="node-status-bar">
+          <span style="color: var(--good);">● G3 AUTHORIZED</span>
+          <span style="color: var(--subtle);">$10M Mandate</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Node Inspector -->
+    <div class="node-inspector" id="nodeInspector">
+      <div>
+        <h4 style="color: var(--ink); font-size: 15px; margin-bottom: 8px;" id="inspTitle">⚙️ CTO / Engineer (Data Ingestion Layer)</h4>
+        <p style="font-size: 13px; color: var(--text); line-height: 1.5;" id="inspDesc">
+          Yahoo Finance 실시간/과거 주가 피드를 수집하여 DuckDB 로컬 시계열 데이터베이스에 자동 영속화합니다. 공시 전 데이터 참조를 막는 Point-in-Time 정합성과 생존편의(상폐종목 유니버스)를 1차 감사하며, 결측률 0.5% 초과 시 하류 리서치를 즉각 차단합니다.
+        </p>
+      </div>
+      <div>
+        <h4 style="color: var(--muted); font-size: 12px; text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 8px;">Gatekeeper Rules & Circuit Breakers</h4>
+        <ul style="font-size: 12px; font-family: var(--font-mono); color: var(--text); padding-left: 18px; line-height: 1.6;" id="inspRules">
+          <li>[G0 승인 조건]: Missing Rate &lt; 0.5%, Zero/Negative Price = 0</li>
+          <li>[서킷 브레이커]: 동일 데이터 에러 5회 연속 발생 시 무한루프 차단 및 긴급 알림</li>
+          <li>[보유 엔진]: scripts/data_feed.py (DuckDB + yfinance)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Split View: Performance & Risk Matrix -->
+  <section class="dashboard-columns">
+    
+    <!-- Left: Equity Curve & Alpha Breakdown -->
+    <div class="card-panel">
+      <div class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        <span class="t-chart-title">벡터화 백테스트 누적 성과 곡선 (Net vs Benchmark)</span>
+      </div>
+
+      <div class="chart-container">
+        <svg class="line-chart" viewBox="0 0 500 180">
+          <!-- Grid lines -->
+          <line x1="40" y1="20" x2="480" y2="20" stroke="var(--border)" stroke-dasharray="3"/>
+          <line x1="40" y1="65" x2="480" y2="65" stroke="var(--border)" stroke-dasharray="3"/>
+          <line x1="40" y1="110" x2="480" y2="110" stroke="var(--border)" stroke-dasharray="3"/>
+          <line x1="40" y1="155" x2="480" y2="155" stroke="var(--border)"/>
+
+          <!-- SPY Benchmark Line -->
+          <path d="M 40 145 Q 120 135 200 125 T 350 115 T 480 100" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4"/>
+          <!-- AURA Net Strategy Line -->
+          <path d="M 40 145 C 90 138, 140 120, 200 100 C 260 80, 320 85, 380 50 C 420 35, 460 30, 480 25" fill="none" stroke="url(#lineGrad)" stroke-width="3.5"/>
+          <!-- Shaded Area -->
+          <path d="M 40 145 C 90 138, 140 120, 200 100 C 260 80, 320 85, 380 50 C 420 35, 460 30, 480 25 L 480 155 L 40 155 Z" fill="url(#areaGrad)" opacity="0.25"/>
+
+          <defs>
+            <linearGradient id="lineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="#a855f7"/>
+            </linearGradient>
+            <linearGradient id="areaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38bdf8"/>
+              <stop offset="100%" stop-color="transparent"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Markers -->
+          <circle cx="480" cy="25" r="5" fill="#a855f7" stroke="#ffffff" stroke-width="2"/>
+          <text x="400" y="20" fill="var(--ink)" font-size="11" font-family="var(--font-mono)" font-weight="700">+23.8% Net</text>
+          <text x="400" y="95" fill="var(--muted)" font-size="11" font-family="var(--font-mono)">+11.2% SPY</text>
+        </svg>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-family: var(--font-mono); font-size: 11px;">
+        <div><span style="color: var(--muted);">Turnover (Ann):</span> <b style="color: var(--ink);">142.6%</b></div>
+        <div><span style="color: var(--muted);">Calmar Ratio:</span> <b style="color: var(--ink);">3.72</b></div>
+        <div><span style="color: var(--muted);">t-Statistic:</span> <b style="color: var(--good);">2.84 (&gt;1.8)</b></div>
+        <div><span style="color: var(--muted);">Win Rate:</span> <b style="color: var(--ink);">58.4%</b></div>
+      </div>
+    </div>
+
+    <!-- Right: CRO Firm-Wide Risk Collision Matrix -->
+    <div class="card-panel">
+      <div class="section-title">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <span class="t-cro-title">CRO 2단계 리스크 & 통합 충돌 방지 매트릭스</span>
+      </div>
+
+      <!-- Collision Safeguard Alert -->
+      <div class="collision-alert">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <h4 class="t-col-title">Firm-Wide Macro Collision Guard: CLEARED</h4>
+          <p class="t-col-desc">Quant PM의 테크주 모멘텀 롱과 Macro PM의 미국채 듀레이션(TLT) 롱이 합산되었으나, 총 금리 민감도 합계가 0.34로 펀드 전체 허용한도(0.60) 이내로 통제되었습니다.</p>
+        </div>
+      </div>
+
+      <!-- Sector Limits -->
+      <div>
+        <h5 style="font-size: 12px; color: var(--muted); text-transform: uppercase; font-family: var(--font-mono); margin-bottom: 8px;" class="t-sec-title">Firm-Wide Sector Exposure vs Hard Cap (35%)</h5>
+        
+        <div class="bar-row">
+          <div class="bar-info"><span>Technology (AAPL, MSFT, NVDA)</span> <b>27.2% / 35.0%</b></div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 77.7%; background: var(--primary);"></div>
+            <div class="bar-limit-marker" style="left: 100%;"></div>
+          </div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-info"><span>Fixed Income / Duration (TLT, IEF)</span> <b>14.0% / 35.0%</b></div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 40.0%; background: var(--accent);"></div>
+          </div>
+        </div>
+
+        <div class="bar-row">
+          <div class="bar-info"><span>Financials (JPM)</span> <b>9.0% / 35.0%</b></div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: 25.7%; background: var(--good);"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Mandate Allocation -->
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Desk</th>
+            <th>Capital</th>
+            <th>Target Strategy</th>
+            <th>Net Beta</th>
+            <th>G2 Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Quant PM Desk</b></td>
+            <td>$6.0M (60%)</td>
+            <td>Momentum-Vol Z-Score L/S</td>
+            <td>+0.01</td>
+            <td style="color: var(--good);">PASS</td>
+          </tr>
+          <tr>
+            <td><b>Macro PM Desk</b></td>
+            <td>$4.0M (40%)</td>
+            <td>Rates & Commodity Overlay</td>
+            <td>+0.01</td>
+            <td style="color: var(--good);">PASS</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </section>
+
+  <!-- Bottom: Live Audit Stream -->
+  <section class="card-panel">
+    <div class="section-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+      <span class="t-log-title">결정론적 게이트키퍼 감사 추적 로그 (Deterministic Audit Trail)</span>
+    </div>
+
+    <div class="terminal-box" id="terminalBox">
+      <div class="log-line"><span class="log-time">[08:42:01]</span> <span class="log-tag G0">[G0: CTO]</span> <span class="log-msg">Ingesting 7 tickers from yfinance into DuckDB (market_data.duckdb)... Clean OHLCV validated. Missing rate 0.0%.</span></div>
+      <div class="log-line"><span class="log-time">[08:42:04]</span> <span class="log-tag G1">[G1: Senior Res]</span> <span class="log-msg">Computing 12-1 Momentum + Low-Vol cross-sectional factors. Vectorized fee deduction (10 bps applied).</span></div>
+      <div class="log-line"><span class="log-time">[08:42:05]</span> <span class="log-tag G1">[G1: Senior Res]</span> <span class="log-msg">Backtest cleared: Net Sharpe 2.14 &gt; 1.8, t-stat 2.84, MDD 6.4% &lt; 25.0%. Overfitting check PASSED.</span></div>
+      <div class="log-line"><span class="log-time">[08:42:07]</span> <span class="log-tag G2">[G2: CRO Desk]</span> <span class="log-msg">Tier 1: Quant PM leverage 1.0x & Net Beta +0.01 validated. Macro PM rate sensitivity 0.20 validated.</span></div>
+      <div class="log-line"><span class="log-time">[08:42:08]</span> <span class="log-tag G2">[G2: CRO Firm-wide]</span> <span class="log-msg">Tier 2: Aggregating 10 positions across all desks. Net Rate Sensitivity = 0.34 &lt; 0.60. Tech exposure 27.2% &lt; 35.0%. NO COLLISION.</span></div>
+      <div class="log-line"><span class="log-time">[08:42:10]</span> <span class="log-tag G3">[G3: CIO Final]</span> <span class="log-msg">All G0-G2 gates cleared with deterministic proof. $10,000,000 Portfolio Mandate released for execution.</span></div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Bilingual Content Map
+  const I18N = {
+    ko: {
+      run: "파이프라인 실행",
+      kpi1_l: "넷 샤프 지수",
+      kpi2_l: "연환산 순수익률",
+      kpi3_l: "최대 낙폭 (MDD)",
+      kpi4_l: "시장 넷 베타",
+      kpi5_l: "통합 금리 민감도",
+      kpi6_l: "일일 토큰 소진량",
+      map_title: "멀티에이전트 오케스트레이션 및 게이트키퍼 맵",
+      map_sub: "에이전트 노드를 클릭하면 해당 계층의 실시간 연산 스펙, 승인 게이트 판정 규칙 및 되돌림 경로(Return Path)를 확인할 수 있습니다.",
+      chart_title: "벡터화 백테스트 누적 성과 곡선 (Net vs Benchmark)",
+      cro_title: "CRO 2단계 리스크 & 통합 충돌 방지 매트릭스",
+      col_title: "Firm-Wide Macro Collision Guard: CLEARED",
+      col_desc: "Quant PM의 테크주 모멘텀 롱과 Macro PM의 미국채 듀레이션(TLT) 롱이 합산되었으나, 총 금리 민감도 합계가 0.34로 펀드 전체 허용한도(0.60) 이내로 통제되었습니다.",
+      sec_title: "펀드 통합 섹터 노출 vs 상한선 (35%)",
+      log_title: "결정론적 게이트키퍼 감사 추적 로그 (Deterministic Audit Trail)",
+    },
+    en: {
+      run: "Run Pipeline",
+      kpi1_l: "Net Sharpe Ratio",
+      kpi2_l: "Ann. Net Return",
+      kpi3_l: "Max Drawdown (MDD)",
+      kpi4_l: "Net Market Beta",
+      kpi5_l: "Firm Rate Sensitivity",
+      kpi6_l: "Daily Token Spend",
+      map_title: "Multi-Agent Orchestration & Gatekeeper Map",
+      map_sub: "Click any agent node to inspect its live computational specs, gate decision rules, and reject/return paths.",
+      chart_title: "Vectorized Cumulative Performance (Net vs Benchmark)",
+      cro_title: "CRO Two-Tier Risk & Firm-Wide Collision Matrix",
+      col_title: "Firm-Wide Macro Collision Guard: CLEARED",
+      col_desc: "Quant PM Tech Longs & Macro PM Duration Longs (TLT) aggregated; combined rate sensitivity 0.34 stays strictly below firm limit (0.60).",
+      sec_title: "Firm-Wide Sector Exposure vs Hard Cap (35%)",
+      log_title: "Deterministic Gatekeeper Audit Trail",
+    }
+  };
+
+  const NODE_DETAILS = {
+    cto: {
+      title: "⚙️ CTO / Engineer (Data Ingestion Layer)",
+      desc_ko: "Yahoo Finance 실시간/과거 주가 피드를 수집하여 DuckDB 로컬 시계열 데이터베이스에 자동 영속화합니다. 공시 전 데이터 참조를 막는 Point-in-Time 정합성과 생존편의(상폐종목 유니버스)를 1차 감사하며, 결측률 0.5% 초과 시 하류 리서치를 즉각 차단합니다.",
+      desc_en: "Ingests live/historical market data from yfinance into a persistent DuckDB database. Audits Point-in-Time alignment to eliminate lookahead bias and survivorship bias. Blocks downstream research if missing rate exceeds 0.5%.",
+      rules: [
+        "[G0 Approval]: Missing Rate < 0.5%, Zero/Negative Price = 0",
+        "[Circuit Breaker]: 5 consecutive pipeline failures halts system for human investigation",
+        "[Deterministic Tool]: scripts/data_feed.py (DuckDB + yfinance)"
+      ]
+    },
+    jr_res: {
+      title: "🔬 Junior Quantitative Researcher (Alpha Ideation)",
+      desc_ko: "12-1 개월 모멘텀, 저변동성 이상 현상, 1개월 단기 반전 팩터를 수식화하고 횡단면 Z-Score 정규화 블렌딩을 통해 복합 알파 신호를 도출합니다.",
+      desc_en: "Formulates 12-1 Momentum, Low-Volatility, and Short-Term Reversal signals, combining them via cross-sectional Z-score standardization.",
+      rules: [
+        "[Hypothesis Standard]: Economically grounded factor rationale required",
+        "[Return Path]: Receives rejected alpha cards from Senior Researcher with specific rework directives"
+      ]
+    },
+    sr_res: {
+      title: "📊 Senior Quantitative Researcher (G1 Alpha Gatekeeper)",
+      desc_ko: "주니어 리서치의 전략을 엄격히 감사하여 과적합(Sharpe > 3.5), 통계적 미달(t-stat < 1.8), 연환산 회전율 600% 초과 여부를 걸러내고 거래비용(10bps) 차감 후 순수 알파를 승인합니다.",
+      desc_en: "Gatekeeper G1: Audits for overfitting (Sharpe > 3.5), statistical insignificance (t-stat < 1.8), or excessive turnover (>600%). Deducts 10bps fee/slippage drag.",
+      rules: [
+        "[G1 Approval]: Net Sharpe > 1.8, t-stat >= 1.8, Max Drawdown <= 25%",
+        "[Circuit Breaker]: 3 consecutive rejections halts automated looping and escalates directly to CIO",
+        "[Deterministic Tool]: scripts/backtest_engine.py"
+      ]
+    },
+    pm: {
+      title: "💼 Portfolio Management Desks (Quant & Macro PM)",
+      desc_ko: "G1을 통과한 전략을 Quant PM(주식 롱숏 60%)과 Macro PM(금리/원자재 40%) 독립 포트폴리오 규칙으로 변환하여 총 레버리지 1.0x 이내의 타깃 비중을 설정합니다.",
+      desc_en: "Translates G1 approved strategy into discrete PM books: Quant L/S (60% weight) and Macro Rates Overlay (40% weight).",
+      rules: [
+        "[Max Single Asset]: 25% single ticker ceiling per desk",
+        "[Return Path]: If CRO G2 rejects due to firm-wide collision, PMs downscale target weights and resubmit"
+      ]
+    },
+    cro: {
+      title: "🛡️ Chief Risk Officer Desk (Two-Tier G2 Gatekeeper)",
+      desc_ko: "이중 리스크 승인 체계: ① PM 데스크별 개별 VaR/단일종목 한도 승인, ② 펀드 전체(Firm-wide) 합산 시 섹터 35% 초과 및 금리 민감도 쏠림(충돌)을 전수 집계하여 이중 감사합니다.",
+      desc_en: "Two-Tier G2 Gatekeeper: 1) Individual PM Desk VaR & concentration limits, 2) Firm-wide aggregated exposure audit (preventing overlapping rate sensitivity & sector clustering).",
+      rules: [
+        "[Tier 1]: Single Asset <= 25%, Quant PM Net Beta <= 0.30",
+        "[Tier 2 Firm-wide]: Combined Rate Sensitivity <= 0.60, Max Sector <= 35%",
+        "[Deterministic Tool]: scripts/risk_engine.py"
+      ]
+    },
+    cio: {
+      title: "👑 Chief Investment Officer (G3 Final Capital Authority)",
+      desc_ko: "모든 G0~G2 게이트를 수학적으로 통과한 포트폴리오에 대해 최종 자본($10M) 배분을 집행합니다. 일일 토큰 예산 80% 소진 시 시스템을 일시정지하고 자본 변경은 반드시 인간 승인을 거칩니다.",
+      desc_en: "Final Gatekeeper G3: Authorizes $10M capital release only when G0-G2 gates are cleared. Enforces 80% daily token spend pause and requires Human-in-the-Loop for capital changes.",
+      rules: [
+        "[G3 Authorization]: All prior gates must show APPROVED status",
+        "[Token Budget]: Pauses at 80% daily burn (450k tokens cap)",
+        "[Irreversible Action Guard]: Paper/Live trading execution requires explicit human confirmation"
+      ]
+    }
+  };
+
+  // Node Inspector Click Interaction
+  const nodes = document.querySelectorAll('.agent-node');
+  const inspTitle = document.getElementById('inspTitle');
+  const inspDesc = document.getElementById('inspDesc');
+  const inspRules = document.getElementById('inspRules');
+
+  let currentLang = 'ko';
+
+  nodes.forEach(node => {
+    node.addEventListener('click', () => {
+      nodes.forEach(n => n.classList.remove('active'));
+      node.classList.add('active');
+      const key = node.getAttribute('data-node');
+      const data = NODE_DETAILS[key];
+      if (data) {
+        inspTitle.textContent = data.title;
+        inspDesc.textContent = currentLang === 'ko' ? data.desc_ko : data.desc_en;
+        inspRules.innerHTML = data.rules.map(r => `<li>${r}</li>`).join('');
+      }
+    });
+  });
+
+  // Language Toggle
+  const langToggle = document.getElementById('langToggle');
+  langToggle.addEventListener('click', () => {
+    currentLang = currentLang === 'ko' ? 'en' : 'ko';
+    document.documentElement.setAttribute('data-lang', currentLang);
+    const strings = I18N[currentLang];
+    
+    document.querySelectorAll('.t-run').forEach(el => el.textContent = strings.run);
+    document.querySelector('.t-kpi1-l').textContent = strings.kpi1_l;
+    document.querySelector('.t-kpi2-l').textContent = strings.kpi2_l;
+    document.querySelector('.t-kpi3-l').textContent = strings.kpi3_l;
+    document.querySelector('.t-kpi4-l').textContent = strings.kpi4_l;
+    document.querySelector('.t-kpi5-l').textContent = strings.kpi5_l;
+    document.querySelector('.t-kpi6-l').textContent = strings.kpi6_l;
+    document.querySelector('.t-map-title').textContent = strings.map_title;
+    document.querySelector('.t-map-sub').textContent = strings.map_sub;
+    document.querySelector('.t-chart-title').textContent = strings.chart_title;
+    document.querySelector('.t-cro-title').textContent = strings.cro_title;
+    document.querySelector('.t-col-title').textContent = strings.col_title;
+    document.querySelector('.t-col-desc').textContent = strings.col_desc;
+    document.querySelector('.t-sec-title').textContent = strings.sec_title;
+    document.querySelector('.t-log-title').textContent = strings.log_title;
+
+    // Refresh active node desc
+    const activeNode = document.querySelector('.agent-node.active');
+    if (activeNode) {
+      const key = activeNode.getAttribute('data-node');
+      inspDesc.textContent = currentLang === 'ko' ? NODE_DETAILS[key].desc_ko : NODE_DETAILS[key].desc_en;
+    }
+  });
+
+  // Theme Toggle
+  const themeToggle = document.getElementById('themeToggle');
+  themeToggle.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-theme');
+    document.documentElement.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+  });
+
+  // Run Pipeline Interactive Simulation
+  const runBtn = document.getElementById('runPipelineBtn');
+  const terminal = document.getElementById('terminalBox');
+  runBtn.addEventListener('click', () => {
+    const now = new Date().toTimeString().split(' ')[0];
+    const log = document.createElement('div');
+    log.className = 'log-line';
+    log.innerHTML = `<span class="log-time">[${now}]</span> <span class="log-tag G3" style="color: var(--accent);">[ORCHESTRATOR]</span> <span class="log-msg">Manual pipeline trigger initiated... Refreshing DuckDB cache & running G0-G3 loop.</span>`;
+    terminal.appendChild(log);
+    terminal.scrollTop = terminal.scrollHeight;
+    
+    runBtn.style.transform = 'scale(0.95)';
+    setTimeout(() => { runBtn.style.transform = ''; }, 150);
+  });
+</script>
+</body>
+</html>

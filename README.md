@@ -15,6 +15,7 @@
 
 > 예선 한도 = 팀 2인 × 3개 = **6개 전부 제출**. 타임리 크레딧 **8/18 배포**부터 사용.
 > **결선 "모두를 위한 서비스":** [Team AI Cost Radar](./FINALS_team_cost_radar.md) — 팀 AI 비용 대시보드.
+> **AI 헤지펀드 오퍼레이션 대시보드 (EN/KO, 라이브):** https://sechan9999.github.io/upstage-agent-skills/ai_hedge_fund_dashboard.html
 > **대시보드 목업 (EN/KO, 라이브):** https://sechan9999.github.io/upstage-agent-skills/FINALS_dashboard.html
 > **결선 발표 스크립트 (~2:30, KO+EN):** [`FINALS_pitch.md`](./FINALS_pitch.md)
 > **발표 슬라이드 (8장, EN/KO, 방향키 넘김):** https://sechan9999.github.io/upstage-agent-skills/FINALS_slides.html
