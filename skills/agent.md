@@ -1,3 +1,9 @@
+---
+name: ai-hedge-fund
+description: Autonomous Quantitative Multi-Agent AI Hedge Fund (CIO/CRO/CTO + Quant/Macro PM + Senior Research). Deterministic G0-G3 Gates, DuckDB/yfinance feeds, Vectorized Backtester, and Two-Tier CRO Collision Guard.
+version: 1.0.0
+---
+
 # Autonomous Multi-Agent AI Hedge Fund: Agent Specification & System Prompts (agent.md)
 
 이 문서는 **AURA (Autonomous Quantitative Multi-Agent Hedge Fund Architecture)** 및 관련 분석 스킬 생태계(`ai-hedge-fund`, `excel-analyzer`, `job-search-toolkit`)를 실전 운영하기 위한 **각 에이전트별 페르소나, 프로덕션 시스템 프롬프트, 상호작용 규약(Contract), G0~G3 게이트키퍼 감사 규칙, 그리고 파이썬 오케스트레이션 템플릿**을 정의한 표준 규격서입니다.
